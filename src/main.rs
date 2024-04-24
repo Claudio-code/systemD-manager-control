@@ -44,7 +44,7 @@ fn main() -> glib::ExitCode {
         .expect("Could not load resources");
     gio::resources_register(&resources);
 
-    let list = systemctl::list_units(Some("service"), Some("enabled"), None).unwrap();
+    let list = systemctl::list_units(None, None, None).unwrap();
 
     for item in list {
         println!("print: {}", item);

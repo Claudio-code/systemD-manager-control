@@ -3,7 +3,16 @@ name = "systemdcontrol"
 version = "0.1.0"
 edition = "2021"
 
+[package.metadata.deb]
+maintainer = "Michael Aaron Murphy <mmstickman@gmail.com>"
+copyright = "2017, Michael Aaron Murphy <mmstickman@gmail.com>"
+license-file = ["COPYING", "4"]
+depends = "$auto"
+section = "utility"
+priority = "optional"
+
 [dependencies]
+cargo-deb = "2.1.0"
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 gtk = { version = "0.7", package = "gtk4" }
 systemctl = "0.3.1"

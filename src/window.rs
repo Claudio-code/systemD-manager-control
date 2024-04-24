@@ -59,7 +59,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct SystemdcontrolWindow(ObjectSubclass<imp::SystemdcontrolWindow>)
-        @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,        @implements gio::ActionGroup, gio::ActionMap;
+        @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,
+        @implements gio::ActionGroup, gio::ActionMap;
 }
 
 impl SystemdcontrolWindow {
