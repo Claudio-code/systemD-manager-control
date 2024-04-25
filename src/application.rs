@@ -23,9 +23,9 @@ use adw::subclass::prelude::*;
 use gtk::{gio, glib};
 
 use crate::config::VERSION;
-use crate::SystemdcontrolWindow;
 
 mod imp {
+    use crate::window::SystemdcontrolWindow;
     use super::*;
 
     #[derive(Debug, Default)]

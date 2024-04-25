@@ -20,15 +20,16 @@
 
 mod application;
 mod config;
+mod daemon_object;
+mod daemon_row;
 mod window;
 
 use self::application::SystemdcontrolApplication;
-use self::window::SystemdcontrolWindow;
 
 use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
-use gtk::{gio, glib};
 use gtk::prelude::*;
+use gtk::{gio, glib};
 
 use systemctl;
 
@@ -44,13 +45,14 @@ fn main() -> glib::ExitCode {
         .expect("Could not load resources");
     gio::resources_register(&resources);
 
-    let list = systemctl::list_units(None, None, None).unwrap();
+    // let list = systemctl::list_units(None, None, None).unwrap();
+    //
+    // for item in list {
+    //     println!("print: {}", item);
+    // }
 
-    for item in list {
-        println!("print: {}", item);
-    }
-
-    let app = SystemdcontrolApplication::new("org.systemd.control", &gio::ApplicationFlags::empty());
+    let app =
+        SystemdcontrolApplication::new("org.systemd.control", &gio::ApplicationFlags::empty());
 
     app.run()
 }

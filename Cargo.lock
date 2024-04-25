@@ -1210,6 +1210,7 @@ dependencies = [
  "gettext-rs",
  "gtk4",
  "libadwaita",
+ "serde",
  "systemctl",
 ]
 

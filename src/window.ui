@@ -20,11 +20,16 @@
           </object>
         </child>
         <property name="content">
-          <object class="GtkLabel" id="label">
-            <property name="label">Hello, World!</property>
-            <style>
-              <class name="title-1"/>
-            </style>
+          <object class="AdwPreferencesGroup">
+            <child>
+              <object class="GtkListBox" id="daemons_list">
+                <property name="selection-mode">none</property>
+                <style>
+                  <class name="overview-list" />
+                </style>
+
+              </object>
+            </child>
           </object>
         </property>
       </object>
