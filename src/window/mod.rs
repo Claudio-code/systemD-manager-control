@@ -41,13 +41,13 @@ impl SystemdcontrolWindow {
             .expect("`settings` should be set int `setup_settings`.")
     }
 
-    fn daemons(&self) -> gio::ListStore {
-        self.imp()
-            .daemons
-            .borrow()
-            .clone()
-            .expect("Could not get current Daemons.")
-    }
+    // fn daemons(&self) -> gio::ListStore {
+    //     self.imp()
+    //         .daemons
+    //         .borrow()
+    //         .clone()
+    //         .expect("Could not get current Daemons.")
+    // }
 
     fn filter(&self) -> Option<CustomFilter> {
         let filter_state: String = self.settings().get("filter");
@@ -71,14 +71,15 @@ impl SystemdcontrolWindow {
 
     fn setup_daemons(&self) {
         let model = gio::ListStore::new::<DaemonObject>();
-        self.imp().daemons.replace(Some(model));
-        let filter_model = FilterListModel::new(Some(self.daemons()), self.filter());
-        let selection_model = NoSelection::new(Some(filter_model.clone()));
+        // self.imp().daemons.replace(Some(model));
+        // let filter_model = FilterListModel::new(Some(self.daemons()), self.filter());
+        // let selection_model = NoSelection::new(Some(filter_model.clone()));
 
 
-        let mut daemon_data2 = DaemonRow::new();
-        daemon_data2.set_subtitle("dqwdqw");
+        let mut daemon_data2 = DaemonRow::new(DaemonObject::new(true, String::from("docker.service")));
+        let mut daemon_data = DaemonRow::new(DaemonObject::new(true, String::from("initrd-udevadm-cleanup-db.service")));
         self.imp().daemons_list.append(&daemon_data2);
+        self.imp().daemons_list.append(&daemon_data);
     }
 
     fn restore_data(&self) {
@@ -87,6 +88,6 @@ impl SystemdcontrolWindow {
         let daemon_data2 = DaemonData { title: String::from("teste2"), startup_enabled: true };
         vec.push(DaemonObject::from_daemon_data(daemon_data));
         vec.push(DaemonObject::from_daemon_data(daemon_data2));
-        self.daemons().extend_from_slice(&vec);
+        // self.daemons().extend_from_slice(&vec);
     }
 }

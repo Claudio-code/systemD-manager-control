@@ -38,7 +38,7 @@ impl ObjectImpl for SystemdcontrolWindow {
         let obj = self.obj();
         obj.setup_settings();
         obj.setup_daemons();
-        obj.restore_data();
+        // obj.restore_data();
     }
 }
 

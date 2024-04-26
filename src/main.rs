@@ -30,8 +30,21 @@ use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
 use gtk::prelude::*;
 use gtk::{gio, glib};
+use gvdb_macros::include_gresource_from_dir;
 
-use systemctl;
+
+const APP_ID: &str = "org.systemd.control";
+
+const DBUS_API_PATH: &str = const_str::concat!("/", const_str::replace!(APP_ID, ".", "/"));
+
+static GRESOURCE_BYTES: &[u8] =
+    if const_str::equal!("/org/systemd/control", DBUS_API_PATH) {
+        include_gresource_from_dir!("/org/systemd/control", "data/resources")
+    } else if const_str::equal!("/org/systemd/control/Devel", DBUS_API_PATH) {
+        include_gresource_from_dir!("/org/systemd/control/Devel", "data/resources")
+    } else {
+        panic!("Invalid DBUS_API_PATH")
+    };
 
 fn main() -> glib::ExitCode {
     // Set up gettext translations
@@ -43,16 +56,12 @@ fn main() -> glib::ExitCode {
     // Load resources
     let resources = gio::Resource::load(PKGDATADIR.to_owned() + "/systemdcontrol.gresource")
         .expect("Could not load resources");
+    let resource_css = gio::Resource::from_data(&glib::Bytes::from_static(GRESOURCE_BYTES))
+        .expect("Could not load resources");
     gio::resources_register(&resources);
+    gio::resources_register(&resource_css);
 
-    // let list = systemctl::list_units(None, None, None).unwrap();
-    //
-    // for item in list {
-    //     println!("print: {}", item);
-    // }
-
-    let app =
-        SystemdcontrolApplication::new("org.systemd.control", &gio::ApplicationFlags::empty());
+    let app = SystemdcontrolApplication::new(APP_ID, &gio::ApplicationFlags::empty());
 
     app.run()
 }
