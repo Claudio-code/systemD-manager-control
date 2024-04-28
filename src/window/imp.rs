@@ -1,11 +1,13 @@
-use std::cell::RefCell;
+use std::{cell::RefCell, sync::OnceLock};
 
 use gio::Settings;
 use glib::subclass::InitializingObject;
 use gtk::prelude::*;
 use adw::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate, ListBox};
+use gtk::{gio, glib, CompositeTemplate, ListBox, Spinner, ScrolledWindow};
+use tokio::runtime::Runtime;
 use std::cell::OnceCell;
+
 
 #[derive(Default, CompositeTemplate)]
 #[template(resource = "/org/systemd/control/window.ui")]
@@ -13,7 +15,8 @@ pub struct SystemdcontrolWindow {
     // Template widgets
     #[template_child]
     pub daemons_list: TemplateChild<ListBox>,
-    pub daemons: RefCell<Option<gio::ListStore>>,
+    #[template_child]
+    pub scrolled_window: TemplateChild<ScrolledWindow>,
     pub settings: OnceCell<Settings>,
 }
 
@@ -37,8 +40,7 @@ impl ObjectImpl for SystemdcontrolWindow {
         self.parent_constructed();
         let obj = self.obj();
         obj.setup_settings();
-        obj.setup_daemons();
-        // obj.restore_data();
+        obj.setup_default_list();
     }
 }
 

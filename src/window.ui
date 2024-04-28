@@ -26,12 +26,21 @@
           <object class="AdwPreferencesGroup">
             <property name="title">List of daemons</property>
             <child>
-              <object class="GtkListBox" id="daemons_list">
-                <property name="selection-mode">none</property>
+              <object class="GtkScrolledWindow" id="scrolled_window">
+                <property name="visible">True</property>
+                <property name="vexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
                 <style>
-                  <class name="boxed-list"/>
                   <class name="daemon-list"/>
                 </style>
+                <child>
+                  <object class="GtkListBox" id="daemons_list">
+                    <property name="selection-mode">none</property>
+                    <style>
+                      <class name="boxed-list"/>
+                    </style>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

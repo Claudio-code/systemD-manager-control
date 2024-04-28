@@ -52,6 +52,7 @@ mod imp {
         // has been launched. Additionally, this callback notifies us when the user
         // tries to launch a "second instance" of the application. When they try
         // to do that, we'll just present any existing window.
+
         fn activate(&self) {
             let application = self.obj();
             // Get the current window or create one if necessary

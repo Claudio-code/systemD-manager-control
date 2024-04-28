@@ -20,8 +20,6 @@
 
 mod application;
 mod config;
-mod daemon_object;
-mod daemon_row;
 mod window;
 
 use self::application::SystemdcontrolApplication;

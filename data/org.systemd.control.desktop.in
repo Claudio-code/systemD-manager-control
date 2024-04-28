@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=systemdcontrol
+Name=System Manager Control
 Exec=systemdcontrol
 Icon=org.systemd.control
 Terminal=false

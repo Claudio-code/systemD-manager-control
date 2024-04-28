@@ -16,6 +16,8 @@ cargo-deb = "2.1.0"
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 gtk = { version = "0.7", package = "gtk4" }
 systemctl = "0.3.1"
+tokio = { version = "1", features = ["full"] }
+async-channel = { version = "2.2.1" }
 serde = { version = "1.0.198", features = ["derive"] }
 const-str = "0.5.7"
 gvdb-macros = "0.1.12"
