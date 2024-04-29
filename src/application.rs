@@ -100,7 +100,6 @@ impl SystemdcontrolApplication {
         let window = self.active_window().unwrap();
         let about = adw::AboutWindow::builder()
             .transient_for(&window)
-            .application_name("systemdcontrol")
             .application_icon("org.systemd.control")
             .developer_name("soneca")
             .version(VERSION)
