@@ -11,8 +11,11 @@
         "--share=network",
         "--share=ipc",
         "--socket=fallback-x11",
+        "--socket=wayland",
         "--device=dri",
-        "--socket=wayland"
+        "--talk-name=org.freedesktop.DBus",
+        "--system-talk-name=org.freedesktop.DBus",
+        "--env=DBUS_FATAL_WARNINGS=0"
     ],
     "build-options" : {
         "append-path" : "/usr/lib/sdk/rust-stable/bin",
@@ -32,6 +35,7 @@
         "/share/gtk-doc",
         "/share/man",
         "/share/pkgconfig",
+        "/lib/systemd",
         "*.la",
         "*.a"
     ],

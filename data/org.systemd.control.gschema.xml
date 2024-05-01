@@ -8,7 +8,7 @@
 				<choice value='timer'/>
 				<choice value='path'/>
 			</choices>
-			<default>'socket'</default>
+			<default>'service'</default>
 			<summary>Filter of the types</summary>
 		</key>
 		<key name="state" type="s">
@@ -16,7 +16,7 @@
 				<choice value='enabled'/>
 				<choice value='disabled'/>
 			</choices>
-			<default>'disabled'</default>
+			<default>'enabled'</default>
 			<summary>Filter state of daemons on systemd</summary>
 		</key>
 	</schema>

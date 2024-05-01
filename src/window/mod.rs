@@ -1,5 +1,6 @@
 mod imp;
 
+use std::collections::HashMap;
 use std::sync::OnceLock;
 
 use adw::prelude::ActionRowExt;
@@ -19,19 +20,22 @@ use serde::{Deserialize, Serialize};
 use systemctl::AutoStartStatus;
 use tokio::runtime::Runtime;
 
+use crate::daemon::Daemon;
+use crate::daemon_row::DaemonRow;
+
 fn runtime() -> &'static Runtime {
     static RUNTIME: OnceLock<Runtime> = OnceLock::new();
     RUNTIME.get_or_init(|| Runtime::new().expect("Setting up tokio runtime needs to succeed."))
 }
 
 glib::wrapper! {
-    pub struct SystemdcontrolWindow(ObjectSubclass<imp::SystemdcontrolWindow>)
+    pub struct SystemdControlWindow(ObjectSubclass<imp::SystemdControlWindow>)
     @extends gtk::ApplicationWindow, gtk::Window, gtk::Widget,
     @implements gio::ActionGroup, gio::ActionMap, gtk::Accessible, gtk::Buildable,
                 gtk::ConstraintTarget, gtk::Native, gtk::Root, gtk::ShortcutManager;
 }
 
-impl SystemdcontrolWindow {
+impl SystemdControlWindow {
     pub fn new<P: glib::IsA<gtk::Application>>(application: &P) -> Self {
         glib::Object::builder().property("application", application).build()
     }
@@ -62,65 +66,78 @@ impl SystemdcontrolWindow {
         }
     }
 
-    fn set_daemons_in_list(&self, list_daemons: Vec<systemctl::Unit>) {
-        for unit in list_daemons {
-            let row = adw::ActionRow
-                ::builder()
-                .use_markup(false)
-                .activatable(false)
-                .title(&unit.name)
-                .build();
+    fn set_daemon_name_in_list(&self, list_daemons: Vec<String>) {
+        for daemon_name in list_daemons {
+            // let mut daemon_data2 = DaemonRow::new(Daemon::new(daemon_name));
+            // self.imp().daemons_list.append(&daemon_data2);
+            // daemon_data2.set_daemon()
+        }
+    }
 
-            if unit.description.is_some() {
-                row.set_subtitle(&unit.description.unwrap());
-            }
+    fn set_daemons_in_list(&self, daemons: HashMap<String, systemctl::Unit>) {
+        
+        for unit_name in daemons.keys() {
+            let unit = daemons.get(unit_name).unwrap();
+            let daemon_row = DaemonRow::new(Daemon::new(unit_name, unit));
+            self.imp().daemons_list.append(&daemon_row);
 
-            let start_button = gtk::Button
-                ::builder()
-                .icon_name("media-playback-start-symbolic")
-                .valign(gtk::Align::Center)
-                .tooltip_text("Start")
-                .build();
-            start_button.add_css_class("flat");
+            // let row = adw::ActionRow
+            //     ::builder()
+            //     .use_markup(false)
+            //     .activatable(false)
+            //     .title(&unit.name)
+            //     .build();
 
-            let stop_button = gtk::Button
-                ::builder()
-                .icon_name("media-playback-stop-symbolic")
-                .valign(gtk::Align::Center)
-                .tooltip_text("Stop")
-                .build();
-            stop_button.add_css_class("flat");
+            // if unit.description.is_some() {
+            //     row.set_subtitle(&unit.description.unwrap());
+            // }
 
-            let restart_button = gtk::Button
-                ::builder()
-                .icon_name("object-rotate-right-symbolic")
-                .valign(gtk::Align::Center)
-                .tooltip_text("Restart")
-                .build();
-            restart_button.add_css_class("flat");
+            // let start_button = gtk::Button
+            //     ::builder()
+            //     .icon_name("media-playback-start-symbolic")
+            //     .valign(gtk::Align::Center)
+            //     .tooltip_text("Start")
+            //     .build();
+            // start_button.add_css_class("flat");
 
-            let auto_startup = CheckButton::builder()
-                .tooltip_text("Disabled on startup system")
-                .sensitive(true)
-                .build();
-            auto_startup.add_css_class("flat");
+            // let stop_button = gtk::Button
+            //     ::builder()
+            //     .icon_name("media-playback-stop-symbolic")
+            //     .valign(gtk::Align::Center)
+            //     .tooltip_text("Stop")
+            //     .build();
+            // stop_button.add_css_class("flat");
 
-            if unit.auto_start == AutoStartStatus::Enabled {
-                auto_startup.set_active(true);
-                auto_startup.set_tooltip_text(Some("Enabled on startup system"));
-            }
+            // let restart_button = gtk::Button
+            //     ::builder()
+            //     .icon_name("object-rotate-right-symbolic")
+            //     .valign(gtk::Align::Center)
+            //     .tooltip_text("Restart")
+            //     .build();
+            // restart_button.add_css_class("flat");
 
-            if unit.active {
-                start_button.set_sensitive(false);
-            } else {
-                stop_button.set_sensitive(false);
-            }
+            // let auto_startup = CheckButton::builder()
+            //     .tooltip_text("Disabled on startup system")
+            //     .sensitive(true)
+            //     .build();
+            // auto_startup.add_css_class("flat");
 
-            row.add_suffix(&auto_startup);
-            row.add_suffix(&start_button);
-            row.add_suffix(&stop_button);
-            row.add_suffix(&restart_button);
-            self.imp().daemons_list.append(&row);
+            // if unit.auto_start == AutoStartStatus::Enabled {
+            //     auto_startup.set_active(true);
+            //     auto_startup.set_tooltip_text(Some("Enabled on startup system"));
+            // }
+
+            // if unit.active {
+            //     start_button.set_sensitive(false);
+            // } else {
+            //     stop_button.set_sensitive(false);
+            // }
+
+            // row.add_suffix(&auto_startup);
+            // row.add_suffix(&start_button);
+            // row.add_suffix(&stop_button);
+            // row.add_suffix(&restart_button);
+            // self.imp().daemons_list.append(&row);
         }
         self.imp().spinner.set_visible(false);
     }

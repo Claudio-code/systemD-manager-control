@@ -18,6 +18,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+mod daemon;
+mod daemon_row;
 mod application;
 mod config;
 mod window;

@@ -1,10 +1,10 @@
-use std::sync::OnceLock;
+use std::{collections::HashMap, sync::OnceLock};
 
 use gio::Settings;
 use glib::subclass::InitializingObject;
-use gtk::{glib::{clone, PropertyGet}, prelude::*};
+use gtk::{ glib::{ clone, PropertyGet }, prelude::* };
 use adw::subclass::prelude::*;
-use gtk::{gio, glib, CompositeTemplate, ListBox, Spinner, ScrolledWindow};
+use gtk::{ gio, glib, CompositeTemplate, ListBox, Spinner, ScrolledWindow };
 use tokio::runtime::Runtime;
 use std::cell::OnceCell;
 
@@ -15,7 +15,7 @@ fn runtime() -> &'static Runtime {
 
 #[derive(Default, CompositeTemplate)]
 #[template(resource = "/org/systemd/control/window.ui")]
-pub struct SystemdcontrolWindow {
+pub struct SystemdControlWindow {
     // Template widgets
     #[template_child]
     pub daemons_list: TemplateChild<ListBox>,
@@ -27,9 +27,9 @@ pub struct SystemdcontrolWindow {
 }
 
 #[glib::object_subclass]
-impl ObjectSubclass for SystemdcontrolWindow {
-    const NAME: &'static str = "SystemdcontrolWindow";
-    type Type = super::SystemdcontrolWindow;
+impl ObjectSubclass for SystemdControlWindow {
+    const NAME: &'static str = "SystemdControlWindow";
+    type Type = super::SystemdControlWindow;
     type ParentType = adw::ApplicationWindow;
 
     fn class_init(klass: &mut Self::Class) {
@@ -41,35 +41,41 @@ impl ObjectSubclass for SystemdcontrolWindow {
     }
 }
 
-impl ObjectImpl for SystemdcontrolWindow {
+impl ObjectImpl for SystemdControlWindow {
     fn constructed(&self) {
         self.parent_constructed();
         let obj = self.obj();
         obj.setup_settings();
-        
         let filter = obj.filter_data();
-        let (sender, receiver) = async_channel::bounded::<Vec<systemctl::Unit>>(1);
+        let (sender, receiver) = async_channel::bounded::<HashMap<String, systemctl::Unit>>(1);
+        
         obj.connect_show(move |_| {
-            runtime().spawn(clone!(@strong sender, @strong filter => async move {
-                let mut list_daemons: Vec<systemctl::Unit> = Vec::new();
+            runtime().spawn(
+                clone!(@strong sender, @strong filter => async move {
+                let mut daemons: HashMap<String, systemctl::Unit> = HashMap::new();
                 for item_name in systemctl::list_units(Some(&filter.filter_type), Some(&filter.state), None).unwrap() {
                     if let Ok(unit) = systemctl::Unit::from_systemctl(&*item_name) {
-                        list_daemons.push(unit);
+                    //    list_daemons.push(unit); 
+                       daemons.insert(item_name, unit);
                     }
+                    // list_daemons.push(item_name);
                 }
-                let _ = sender.send(list_daemons).await;
-            }));
+                let _ = sender.send(daemons).await;
+            })
+            );
         });
 
-        glib::spawn_future_local(clone!(@weak obj => async move {
-            while let Ok(list_daemons) = receiver.recv().await {
-                obj.set_daemons_in_list(list_daemons);
-            }
-        }));
+        glib::spawn_future_local(
+            clone!(@weak obj => async move {
+                while let Ok(daemons) = receiver.recv().await {
+                    obj.set_daemons_in_list(daemons);
+                }
+            })
+        );
     }
 }
 
-impl WidgetImpl for SystemdcontrolWindow {}
-impl WindowImpl for SystemdcontrolWindow {}
-impl ApplicationWindowImpl for SystemdcontrolWindow {}
-impl AdwApplicationWindowImpl for SystemdcontrolWindow  {}
+impl WidgetImpl for SystemdControlWindow {}
+impl WindowImpl for SystemdControlWindow {}
+impl ApplicationWindowImpl for SystemdControlWindow {}
+impl AdwApplicationWindowImpl for SystemdControlWindow {}

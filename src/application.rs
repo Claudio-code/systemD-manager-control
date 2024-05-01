@@ -25,7 +25,7 @@ use gtk::{gio, glib};
 use crate::config::VERSION;
 
 mod imp {
-    use crate::window::SystemdcontrolWindow;
+    use crate::window::SystemdControlWindow;
     use super::*;
 
     #[derive(Debug, Default)]
@@ -59,7 +59,7 @@ mod imp {
             let window = if let Some(window) = application.active_window() {
                 window
             } else {
-                let window = SystemdcontrolWindow::new(&*application);
+                let window = SystemdControlWindow::new(&*application);
                 window.upcast()
             };
 
