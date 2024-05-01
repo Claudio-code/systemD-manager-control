@@ -1,10 +1,7 @@
-use std::cell::RefCell;
-
 use gtk::glib;
-use serde::{Deserialize, Serialize};
 use systemctl::AutoStartStatus;
 
-#[derive(Clone, Debug, PartialEq, glib::Boxed)]
+#[derive(Default, Clone, Debug, PartialEq, glib::Boxed)]
 #[boxed_type(name = "Daemon")]
 pub struct Daemon {
     unit_name: String,
@@ -13,7 +10,10 @@ pub struct Daemon {
 
 impl Daemon {
     pub fn new(unit_name: &String, unit: &systemctl::Unit) -> Self {
-        Self { unit_name: unit_name.to_string(), unit: unit.clone() }
+        Self {
+            unit_name: unit_name.to_string(),
+            unit: unit.clone(),
+        }
     }
 
     pub fn title(&self) -> String {
@@ -36,5 +36,17 @@ impl Daemon {
 
     pub fn is_auto_start(&self) -> bool {
         self.unit.auto_start == AutoStartStatus::Enabled
+    }
+
+    pub fn stop(&self) {
+        let _ = self.unit.stop();
+    }
+
+    pub fn start(&self) {
+        let _ = self.unit.start();
+    }
+
+    pub fn restart(&self) {
+        let _ = self.unit.restart();
     }
 }

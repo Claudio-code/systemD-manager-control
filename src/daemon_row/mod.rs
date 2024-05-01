@@ -1,11 +1,8 @@
 mod imp;
 
+use crate::daemon::Daemon;
 use glib::Object;
-use gtk::prelude::*;
-use gtk::subclass::prelude::*;
-use gtk::{ glib, pango };
-
-use crate::daemon::{ self, Daemon };
+use gtk::glib;
 
 glib::wrapper! {
     pub struct DaemonRow(ObjectSubclass<imp::DaemonRow>)

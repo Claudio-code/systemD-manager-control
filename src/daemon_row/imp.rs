@@ -1,14 +1,10 @@
-use std::{ borrow::Borrow, cell::{ OnceCell, RefCell }, sync::OnceLock };
+use std::cell::OnceCell;
 
-use super::*;
-use gtk::{glib::clone, Button};
-use gtk::subclass::prelude::*;
+use crate::daemon::Daemon;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use adw::subclass::prelude::*;
-use gtk::{ glib, CheckButton, CompositeTemplate, Label, TemplateChild };
-use tokio::runtime::Runtime;
-use crate::{ application::SystemdcontrolApplication, daemon::Daemon };
+use gtk::Button;
+use gtk::{glib, CheckButton, CompositeTemplate, TemplateChild};
 
 #[derive(Default, CompositeTemplate, glib::Properties)]
 #[template(resource = "/org/systemd/control/daemon_row.ui")]
@@ -52,14 +48,42 @@ impl ObjectImpl for DaemonRow {
         let daemon = obj.daemon();
 
         if daemon.active() {
-            obj.imp().start_button.set_sensitive(false);    
+            obj.imp().start_button.set_sensitive(false);
         } else {
             obj.imp().stop_button.set_sensitive(false);
         }
         if daemon.has_subtitle() {
             obj.set_subtitle(&daemon.subtitle());
         }
-        obj.imp().auto_start_button.set_active(daemon.is_auto_start());
+        obj.imp()
+            .auto_start_button
+            .set_active(daemon.is_auto_start());
+
+        obj.imp()
+            .stop_button
+            .connect_clicked(glib::clone!(@weak obj => move |button| {
+                button.set_sensitive(false);
+                obj.daemon().stop();
+                obj.imp().start_button.set_sensitive(true);
+            }));
+
+        obj.imp()
+            .start_button
+            .connect_clicked(glib::clone!(@weak obj => move |button| {
+                button.set_sensitive(false);
+                obj.daemon().start();
+                obj.imp().stop_button.set_sensitive(true);
+            }));
+
+        obj.imp()
+            .restart_button
+            .connect_clicked(glib::clone!(@weak obj => move |button| {
+                button.set_sensitive(false);
+                obj.daemon().restart();
+                obj.imp().start_button.set_sensitive(false);
+                obj.imp().stop_button.set_sensitive(true);
+                button.set_sensitive(true);
+            }));
     }
 }
 

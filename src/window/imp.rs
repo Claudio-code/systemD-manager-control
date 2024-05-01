@@ -1,12 +1,12 @@
 use std::{collections::HashMap, sync::OnceLock};
 
+use adw::subclass::prelude::*;
 use gio::Settings;
 use glib::subclass::InitializingObject;
-use gtk::{ glib::{ clone, PropertyGet }, prelude::* };
-use adw::subclass::prelude::*;
-use gtk::{ gio, glib, CompositeTemplate, ListBox, Spinner, ScrolledWindow };
-use tokio::runtime::Runtime;
+use gtk::{gio, glib, CompositeTemplate, ListBox, ScrolledWindow, Spinner};
+use gtk::{glib::clone, prelude::*};
 use std::cell::OnceCell;
+use tokio::runtime::Runtime;
 
 fn runtime() -> &'static Runtime {
     static RUNTIME: OnceLock<Runtime> = OnceLock::new();
@@ -48,30 +48,26 @@ impl ObjectImpl for SystemdControlWindow {
         obj.setup_settings();
         let filter = obj.filter_data();
         let (sender, receiver) = async_channel::bounded::<HashMap<String, systemctl::Unit>>(1);
-        
+
         obj.connect_show(move |_| {
             runtime().spawn(
                 clone!(@strong sender, @strong filter => async move {
-                let mut daemons: HashMap<String, systemctl::Unit> = HashMap::new();
-                for item_name in systemctl::list_units(Some(&filter.filter_type), Some(&filter.state), None).unwrap() {
-                    if let Ok(unit) = systemctl::Unit::from_systemctl(&*item_name) {
-                    //    list_daemons.push(unit); 
-                       daemons.insert(item_name, unit);
+                    let mut daemons: HashMap<String, systemctl::Unit> = HashMap::new();
+                    for item_name in systemctl::list_units(Some(&filter.filter_type), Some(&filter.state), None).unwrap() {
+                        if let Ok(unit) = systemctl::Unit::from_systemctl(&*item_name) {
+                            daemons.insert(item_name, unit);
+                        }
                     }
-                    // list_daemons.push(item_name);
-                }
-                let _ = sender.send(daemons).await;
-            })
+                    let _ = sender.send(daemons).await;
+                })
             );
         });
 
-        glib::spawn_future_local(
-            clone!(@weak obj => async move {
-                while let Ok(daemons) = receiver.recv().await {
-                    obj.set_daemons_in_list(daemons);
-                }
-            })
-        );
+        glib::spawn_future_local(clone!(@weak obj => async move {
+            while let Ok(daemons) = receiver.recv().await {
+                obj.set_daemons_in_list(daemons);
+            }
+        }));
     }
 }
 
