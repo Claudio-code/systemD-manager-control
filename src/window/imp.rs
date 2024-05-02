@@ -1,7 +1,7 @@
 use adw::subclass::prelude::*;
 use gio::Settings;
 use glib::subclass::InitializingObject;
-use gtk::prelude::*;
+use gtk::{prelude::*, Entry, SearchEntry};
 use gtk::{gio, glib, CompositeTemplate, ListBox, MenuButton, ScrolledWindow, Spinner};
 use std::cell::OnceCell;
 
@@ -17,6 +17,8 @@ pub struct SystemdControlWindow {
     pub scrolled_window: TemplateChild<ScrolledWindow>,
     #[template_child]
     pub spinner: TemplateChild<Spinner>,
+    #[template_child]
+    pub daemon_search_entry: TemplateChild<SearchEntry>,
 
     pub settings: OnceCell<Settings>,
 }

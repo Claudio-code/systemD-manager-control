@@ -16,7 +16,7 @@
                 <object class="GtkSearchBar" id="daemon_searchbar">
                   <property name="search-mode-enabled">1</property>
                   <property name="child">
-                    <object class="GtkSearchEntry" id="daemon_searchentry">
+                    <object class="GtkSearchEntry" id="daemon_search_entry">
                     </object>
                   </property>
                 </object>
@@ -26,13 +26,12 @@
                 <property name="visible">True</property>
                 <property name="primary">True</property>
                 <property name="valign">center</property>
-                <property name="label">center</property>
                 <property name="icon-name">pan-down-symbolic</property>
-                <property name="tooltip-text" translatable="yes">Types of daemons</property>"
+                <property name="tooltip-text" translatable="yes">Types of daemons and state enabled/disabled</property>"
                 <property name="menu-model">daemon-type-menu</property>
                 <style><class name="flat"/></style>
                 <accessibility>
-                    <property name="label" translatable="yes">Types of daemons</property>
+                    <property name="label" translatable="yes">Types of daemons and state enabled/disabled</property>
                 </accessibility>
               </object>
             </child>
@@ -101,24 +100,34 @@
   <menu id="daemon-type-menu">
     <section>
       <item>
-        <attribute name="label" translatable="yes">service</attribute>
+        <attribute name="label" translatable="yes">Service</attribute>
         <attribute name="action">win.filter-service</attribute>
       </item>
-    </section>
-    <section>
       <item>
-        <attribute name="label" translatable="yes">socket</attribute>
+        <attribute name="label" translatable="yes">Socket</attribute>
         <attribute name="action">win.filter-socket</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">timer</attribute>
+        <attribute name="label" translatable="yes">Timer</attribute>
         <attribute name="action">win.filter-timer</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Path</attribute>
+        <attribute name="action">win.filter-path</attribute>
       </item>
     </section>
     <section>
       <item>
-        <attribute name="label" translatable="yes">path</attribute>
-        <attribute name="action">win.filter-path</attribute>
+        <attribute name="label" translatable="yes">Enabled</attribute>
+        <attribute name="action">win.filter-auto-start-enabled</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Disabled</attribute>
+        <attribute name="action">win.filter-auto-start-disabled</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">All</attribute>
+        <attribute name="action">win.filter-auto-start-All</attribute>
       </item>
     </section>
   </menu>

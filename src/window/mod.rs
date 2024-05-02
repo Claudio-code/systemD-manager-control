@@ -108,11 +108,30 @@ impl SystemdControlWindow {
             .activate(move |window: &Self, _, _| window.filter(Some(String::from("service")), None))
             .build();
 
+        let action_filter_auto_start_disabled =
+            gio::ActionEntry::builder("filter-auto-start-enabled")
+                .activate(move |window: &Self, _, _| {
+                    window.filter(None, Some(String::from("enabled")))
+                })
+                .build();
+        let action_filter_auto_start_enabled =
+            gio::ActionEntry::builder("filter-auto-start-disabled")
+                .activate(move |window: &Self, _, _| {
+                    window.filter(None, Some(String::from("disabled")))
+                })
+                .build();
+        let action_filter_auto_start_all = gio::ActionEntry::builder("filter-auto-start-All")
+            .activate(move |window: &Self, _, _| window.filter(None, Some(String::from("All"))))
+            .build();
+
         self.add_action_entries([
             action_filter_path,
             action_filter_socket,
             action_filter_service,
             action_filter_timer,
+            action_filter_auto_start_disabled,
+            action_filter_auto_start_enabled,
+            action_filter_auto_start_all,
         ]);
     }
 }
