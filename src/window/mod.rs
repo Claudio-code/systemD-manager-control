@@ -85,13 +85,50 @@ impl SystemdControlWindow {
     }
 
     fn set_daemons_in_list(&self, daemons: HashMap<String, systemctl::Unit>) {
+        let mut daemons_to_save: Vec<Daemon> = Vec::new();
         self.imp().daemons_list.remove_all();
+
         for unit_name in daemons.keys() {
             let unit = daemons.get(unit_name).unwrap();
-            let daemon_row = DaemonRow::new(Daemon::new(unit_name, unit));
+            let daemon = Daemon::new(unit_name, unit);
+            let daemon_row = DaemonRow::new(daemon.clone());
+
+            daemons_to_save.push(daemon);
             self.imp().daemons_list.append(&daemon_row);
         }
+
+        self.imp().daemons.replace(daemons_to_save);
         self.imp().spinner.set_visible(false);
+    }
+
+    fn search_daemons_in_list(&self) {
+        self.imp().spinner.set_visible(true);
+        self.imp().daemons_list.remove_all();
+
+        let search = self.imp().daemon_search_entry.text().to_string();
+        let daemon_to_filter = self.imp().daemons.borrow().clone();
+
+        let result: Vec<&Daemon> = daemon_to_filter
+            .iter()
+            .filter(|unit| unit.title().contains(&*search))
+            .collect();
+
+        for daemon in result {
+            let daemon_row = DaemonRow::new(daemon.clone());
+            self.imp().daemons_list.append(&daemon_row);
+        }
+
+        self.imp().spinner.set_visible(false);
+    }
+
+    fn set_search(&self) {
+        self.imp().daemon_search_entry.connect_search_changed(
+            clone!(@weak self as window => move |_| window.search_daemons_in_list()),
+        );
+
+        self.imp().daemon_search_entry.connect_activate(
+            clone!(@weak self as window => move |_| window.search_daemons_in_list()),
+        );
     }
 
     fn set_actions(&self) {

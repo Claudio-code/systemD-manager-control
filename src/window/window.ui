@@ -15,8 +15,11 @@
             <child>
                 <object class="GtkSearchBar" id="daemon_searchbar">
                   <property name="search-mode-enabled">1</property>
+                  <property name="show-close-button">0</property>
+                  <style><class name="search-daemon-box"/></style>
                   <property name="child">
                     <object class="GtkSearchEntry" id="daemon_search_entry">
+                      <property name="activates-default">1</property>
                     </object>
                   </property>
                 </object>

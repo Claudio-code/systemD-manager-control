@@ -1,9 +1,11 @@
 use adw::subclass::prelude::*;
 use gio::Settings;
 use glib::subclass::InitializingObject;
-use gtk::{prelude::*, Entry, SearchEntry};
 use gtk::{gio, glib, CompositeTemplate, ListBox, MenuButton, ScrolledWindow, Spinner};
-use std::cell::OnceCell;
+use gtk::{prelude::*, SearchEntry};
+use std::cell::{OnceCell, RefCell};
+
+use crate::daemon::Daemon;
 
 #[derive(Default, CompositeTemplate)]
 #[template(resource = "/org/systemd/control/window/window.ui")]
@@ -21,6 +23,7 @@ pub struct SystemdControlWindow {
     pub daemon_search_entry: TemplateChild<SearchEntry>,
 
     pub settings: OnceCell<Settings>,
+    pub daemons: RefCell<Vec<Daemon>>,
 }
 
 #[glib::object_subclass]
@@ -44,6 +47,7 @@ impl ObjectImpl for SystemdControlWindow {
         let obj = self.obj();
         obj.setup_settings();
         obj.set_actions();
+        obj.set_search();
         obj.connect_show(glib::clone!(@weak obj => move |_| obj.filter(None, None)));
     }
 }
