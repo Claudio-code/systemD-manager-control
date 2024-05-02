@@ -21,8 +21,8 @@ impl Daemon {
     }
 
     pub fn subtitle(&self) -> String {
-        let description = self.unit.description.clone();
-        description.unwrap()
+        let description = self.unit.description.clone().unwrap();
+        description.replace("&", "&amp;")
     }
 
     pub fn has_subtitle(&self) -> bool {
@@ -48,5 +48,13 @@ impl Daemon {
 
     pub fn restart(&self) {
         let _ = self.unit.restart();
+    }
+
+    pub fn change_auto_start(&self) {
+        if self.is_auto_start() {
+            let _ = self.unit.disable();
+        } else {
+            let _ = self.unit.enable();
+        }
     }
 }

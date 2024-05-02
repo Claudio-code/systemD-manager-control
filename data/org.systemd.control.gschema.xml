@@ -15,6 +15,7 @@
 			<choices>
 				<choice value='enabled'/>
 				<choice value='disabled'/>
+				<choice value='All'/>
 			</choices>
 			<default>'enabled'</default>
 			<summary>Filter state of daemons on systemd</summary>

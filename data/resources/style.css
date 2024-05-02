@@ -1,3 +1,10 @@
 .daemon-list {
+    margin-top: 20px;
+}
+
+.adw-preferences-group {
     margin: 20px;
+}
+
+.filter-list {
 }

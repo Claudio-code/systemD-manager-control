@@ -3,11 +3,10 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="Adw" version="1.0"/>
   <template class="SystemdControlWindow" parent="AdwApplicationWindow">
-    <!-- <property name="title" translatable="yes">SystemD Manager Control</property> -->
     <property name="width-request">360</property>
     <property name="height-request">294</property>
     <property name="default-width">782</property>
-    <property name="default-height">626</property>
+    <property name="default-height">826</property>
     <property name="content">
       <object class="AdwToolbarView">
         <child type="top">
@@ -23,6 +22,21 @@
                 </object>
             </child>
             <child>
+              <object class="GtkMenuButton" id="daemon_type_button">
+                <property name="visible">True</property>
+                <property name="primary">True</property>
+                <property name="valign">center</property>
+                <property name="label">center</property>
+                <property name="icon-name">pan-down-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Types of daemons</property>"
+                <property name="menu-model">daemon-type-menu</property>
+                <style><class name="flat"/></style>
+                <accessibility>
+                    <property name="label" translatable="yes">Types of daemons</property>
+                </accessibility>
+              </object>
+            </child>
+            <child>
               <object class="GtkSpinner" id="spinner">
                 <property name="spinning">1</property>
                 <property name="width-request">22</property>
@@ -35,13 +49,16 @@
                 <property name="icon-name">open-menu-symbolic</property>
                 <property name="tooltip-text" translatable="yes">Menu</property>
                 <property name="menu-model">primary_menu</property>
+                <style><class name="flat"/></style>
               </object>
             </child>
           </object>
         </child>
         <property name="content">
           <object class="AdwPreferencesGroup">
-            <property name="title">filters</property>
+            <style>
+              <class name="adw-preferences-group"/>
+            </style>
             <child>
               <object class="GtkScrolledWindow" id="scrolled_window">
                 <property name="visible">True</property>
@@ -76,8 +93,32 @@
         <attribute name="action">win.show-help-overlay</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">_About SystemDControl</attribute>
+        <attribute name="label" translatable="yes">_About</attribute>
         <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="daemon-type-menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">service</attribute>
+        <attribute name="action">win.filter-service</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">socket</attribute>
+        <attribute name="action">win.filter-socket</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">timer</attribute>
+        <attribute name="action">win.filter-timer</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">path</attribute>
+        <attribute name="action">win.filter-path</attribute>
       </item>
     </section>
   </menu>

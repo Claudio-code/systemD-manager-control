@@ -7,7 +7,7 @@ use gtk::Button;
 use gtk::{glib, CheckButton, CompositeTemplate, TemplateChild};
 
 #[derive(Default, CompositeTemplate, glib::Properties)]
-#[template(resource = "/org/systemd/control/daemon_row.ui")]
+#[template(resource = "/org/systemd/control/daemon_row/daemon_row.ui")]
 #[properties(wrapper_type = super::DaemonRow)]
 pub struct DaemonRow {
     #[template_child]
@@ -83,6 +83,19 @@ impl ObjectImpl for DaemonRow {
                 obj.imp().start_button.set_sensitive(false);
                 obj.imp().stop_button.set_sensitive(true);
                 button.set_sensitive(true);
+            }));
+
+        obj.imp()
+            .auto_start_button
+            .connect_toggled(glib::clone!(@weak obj => move |button| {
+                if obj.daemon().is_auto_start() {   
+                    button.set_active(false);
+                    obj.imp().start_button.set_sensitive(true);
+                } else {
+                    button.set_active(true);
+                    obj.imp().stop_button.set_sensitive(true);
+                }
+                obj.daemon().change_auto_start();
             }));
     }
 }

@@ -62,6 +62,5 @@ fn main() -> glib::ExitCode {
     gio::resources_register(&resource_css);
 
     let app = SystemdcontrolApplication::new(APP_ID, &gio::ApplicationFlags::empty());
-
     app.run()
 }
