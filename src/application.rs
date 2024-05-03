@@ -23,9 +23,9 @@ use adw::subclass::prelude::*;
 use gtk::{gio, glib};
 
 use crate::config::VERSION;
-use crate::SystemdcontrolWindow;
 
 mod imp {
+    use crate::window::SystemdControlWindow;
     use super::*;
 
     #[derive(Debug, Default)]
@@ -52,13 +52,14 @@ mod imp {
         // has been launched. Additionally, this callback notifies us when the user
         // tries to launch a "second instance" of the application. When they try
         // to do that, we'll just present any existing window.
+
         fn activate(&self) {
             let application = self.obj();
             // Get the current window or create one if necessary
             let window = if let Some(window) = application.active_window() {
                 window
             } else {
-                let window = SystemdcontrolWindow::new(&*application);
+                let window = SystemdControlWindow::new(&*application);
                 window.upcast()
             };
 
@@ -99,7 +100,6 @@ impl SystemdcontrolApplication {
         let window = self.active_window().unwrap();
         let about = adw::AboutWindow::builder()
             .transient_for(&window)
-            .application_name("systemdcontrol")
             .application_icon("org.systemd.control")
             .developer_name("soneca")
             .version(VERSION)

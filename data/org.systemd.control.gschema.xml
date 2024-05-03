@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="systemdcontrol">
 	<schema id="org.systemd.control" path="/org/systemd/control/">
+		<key name="type" type="s">
+			<choices>
+				<choice value='service'/>
+				<choice value='socket'/>
+				<choice value='timer'/>
+				<choice value='path'/>
+			</choices>
+			<default>'service'</default>
+			<summary>Filter of the types</summary>
+		</key>
+		<key name="state" type="s">
+			<choices>
+				<choice value='enabled'/>
+				<choice value='disabled'/>
+				<choice value='All'/>
+			</choices>
+			<default>'enabled'</default>
+			<summary>Filter state of daemons on systemd</summary>
+		</key>
 	</schema>
 </schemalist>

@@ -2,3 +2,4 @@ data/org.systemd.control.desktop.in
 data/org.systemd.control.metainfo.xml.in
 data/org.systemd.control.gschema.xml
 src/window.ui
+src/daemon_row.ui
