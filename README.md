@@ -34,6 +34,7 @@ curl https://sh.rustup.rs -sSf | sh
 
 ```sh
 cargo check
+mkdir -p build
 meson --prefix=/usr build
 ninja -C build
 sudo ninja -C build install
